@@ -15,8 +15,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.luv2code.springboot.cruddemo.entity.Employee;
 import com.luv2code.springboot.cruddemo.service.EmployeeService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
 @RestController
 @RequestMapping("/api")
+@Api(value = "Employee Management System")
 public class EmployeeRestController {
 	
 	
@@ -28,14 +35,30 @@ public class EmployeeRestController {
 	}
 	
 	//expose "/employees" and return list of employees
+	@ApiOperation(value = "View a list of available employees", response = Employee.class)
+	@ApiResponses(value = {
+	        @ApiResponse(code = 200, message = "Successfully retrieved list"),
+	        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+	        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+	        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+	})
 	@GetMapping("/employees")
 	public List<Employee>findAll(){
 		return employeeService.findAll();
 	}
 	
 	//add mapping for GET/employee/{employeeId}
-	@GetMapping("/employees/{employeeId}")
-	public Employee getEmployee(@PathVariable int employeeId) {
+	@ApiOperation(value = "Get Employee by Id", response = Employee.class)
+	@ApiResponses(value = {
+	        @ApiResponse(code = 200, message = "Successfully retrieved list"),
+	        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+	        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+	        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+	})
+	@GetMapping("/employees/{ID}")
+	public Employee getEmployee(
+			@ApiParam(value = "Employee id from which employee object will retrieve", required = true)
+			@PathVariable(value = "ID") int employeeId) {
 		Employee theEmployee =  employeeService.findById(employeeId);
 		if(theEmployee == null) {
 			throw new RuntimeException("Employee id not found: " +employeeId);
@@ -45,7 +68,16 @@ public class EmployeeRestController {
 	
 	//add mapping for POST/employees - add new employee
 	@PostMapping("/employees")
-	public Employee addEmployee(@RequestBody Employee theEmployee) {
+	@ApiOperation(value = "Add a new Employee")
+	@ApiResponses(value = {
+	        @ApiResponse(code = 200, message = "Successfully retrieved list"),
+	        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+	        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+	        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+	})
+	public Employee addEmployee(
+			@ApiParam(value = "Employee object store it in a database table", required = true)
+			@RequestBody Employee theEmployee) {
 		
 		// also jst in case they pass an id in JSON ... set id to 0
 		//this is to force a save of new item ... instead of update
@@ -58,14 +90,32 @@ public class EmployeeRestController {
 	
 	//add mapping for PUT/employees - update existing employee
 	@PutMapping("/employees")
-	public Employee updateEmployee(@RequestBody Employee theEmployee) {
+	@ApiOperation(value = "Update the employee")
+	@ApiResponses(value = {
+	        @ApiResponse(code = 200, message = "Successfully retrieved list"),
+	        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+	        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+	        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+	})
+	public Employee updateEmployee(
+			@ApiParam(value = "Update this Employee object")
+			@RequestBody Employee theEmployee) {
 		employeeService.save(theEmployee);
 		return theEmployee;
 	}
 	
 	//add mapping for DELETE/employees - delete employee
 	@DeleteMapping("/employees/{employeeId}")
-	public String deleteEmployee(@PathVariable int employeeId) {
+	@ApiOperation("Delete Employee")
+	@ApiResponses(value = {
+	        @ApiResponse(code = 200, message = "Successfully retrieved list"),
+	        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+	        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+	        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+	})
+	public String deleteEmployee(
+			@ApiParam(value = "Employee id based on which the employee will be deleted")
+			@PathVariable int employeeId) {
 		
 		Employee tempEmployee = employeeService.findById(employeeId);
 		
