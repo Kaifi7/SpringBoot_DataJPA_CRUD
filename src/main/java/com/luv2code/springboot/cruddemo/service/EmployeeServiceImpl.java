@@ -19,12 +19,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 		employeeRepository = theEmployeeRepository;
 	}
 	
-	@Override
 	public List<Employee> findAll() {
 		return employeeRepository.findAll();
 	}
 
-	@Override
 	public Employee findById(int theId) {
 		Optional<Employee> result = employeeRepository.findById(theId);
 		Employee theEmployee = null;
@@ -38,14 +36,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 		return theEmployee;
 	}
 
-	@Override
-	public void save(Employee theEmployee) {
-		employeeRepository.save(theEmployee);
+	public Employee save(Employee theEmployee) {
+		return employeeRepository.save(theEmployee);
 	}
 
-	@Override
-	public void deleteById(int theId) {
+	public String deleteById(int theId) {
 		employeeRepository.deleteById(theId);
+		return "SUCCESS";
 	}
 
 }
